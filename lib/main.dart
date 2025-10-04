@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:prayertracker/prayer_button.dart';
 
 void main() {
-  runApp(const IOSapp());
+  runApp(ProviderScope(child: const IOSapp()));
 }
 
 class IOSapp extends StatelessWidget {
