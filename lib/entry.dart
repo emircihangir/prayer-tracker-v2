@@ -1,5 +1,15 @@
 import 'package:intl/intl.dart';
-import 'package:prayertracker/prayer_button.dart';
+
+enum PrayerValue {
+  empty(0),
+  half(1),
+  full(2);
+
+  final int value;
+  const PrayerValue(this.value);
+}
+
+enum PrayerKind { morning, noon, afternoon, night, evening }
 
 /// CSV format: date,morning,noon,afternoon,night,evening
 ///
@@ -7,20 +17,81 @@ import 'package:prayertracker/prayer_button.dart';
 class Entry {
   static final DateFormat _dateFormat = DateFormat('yyyy-MM-dd');
   final DateTime date;
-  final PrayerValue morning;
-  final PrayerValue noon;
-  final PrayerValue afternoon;
-  final PrayerValue night;
-  final PrayerValue evening;
+  final PrayerValue morningValue;
+  final PrayerValue noonValue;
+  final PrayerValue afternoonValue;
+  final PrayerValue nightValue;
+  final PrayerValue eveningValue;
 
-  const Entry({
+  static DateFormat dateFormat() => _dateFormat;
+
+  Entry({
     required this.date,
-    this.morning = PrayerValue.empty,
-    this.noon = PrayerValue.empty,
-    this.afternoon = PrayerValue.empty,
-    this.night = PrayerValue.empty,
-    this.evening = PrayerValue.empty,
+    this.morningValue = PrayerValue.empty,
+    this.noonValue = PrayerValue.empty,
+    this.afternoonValue = PrayerValue.empty,
+    this.nightValue = PrayerValue.empty,
+    this.eveningValue = PrayerValue.empty,
   });
+
+  Entry copyWith({
+    PrayerValue? newMorningValue,
+    PrayerValue? newNoonValue,
+    PrayerValue? newAfternoonValue,
+    PrayerValue? newNightValue,
+    PrayerValue? newEveningValue,
+  }) => Entry(
+    date: date,
+    morningValue: newMorningValue ?? morningValue,
+    noonValue: newNoonValue ?? noonValue,
+    afternoonValue: newAfternoonValue ?? afternoonValue,
+    nightValue: newNightValue ?? nightValue,
+    eveningValue: newEveningValue ?? eveningValue,
+  );
+
+  Entry toggleValue(PrayerKind prayerKind) {
+    final currentValue = getPrayerValue(prayerKind).value;
+    final newValue = PrayerValue.values[(currentValue + 1) % 3];
+    return setPrayerValue(prayerKind, newValue);
+  }
+
+  PrayerValue getPrayerValue(PrayerKind prayerKind) {
+    switch (prayerKind) {
+      case PrayerKind.morning:
+        return morningValue;
+
+      case PrayerKind.noon:
+        return noonValue;
+
+      case PrayerKind.afternoon:
+        return afternoonValue;
+
+      case PrayerKind.night:
+        return nightValue;
+
+      case PrayerKind.evening:
+        return eveningValue;
+    }
+  }
+
+  Entry setPrayerValue(PrayerKind prayerKind, PrayerValue value) {
+    switch (prayerKind) {
+      case PrayerKind.morning:
+        return copyWith(newMorningValue: value);
+
+      case PrayerKind.noon:
+        return copyWith(newNoonValue: value);
+
+      case PrayerKind.afternoon:
+        return copyWith(newAfternoonValue: value);
+
+      case PrayerKind.night:
+        return copyWith(newNightValue: value);
+
+      case PrayerKind.evening:
+        return copyWith(newEveningValue: value);
+    }
+  }
 
   static PrayerValue _parsePrayerValue(String s) {
     int? valueIndex = int.tryParse(s);
@@ -52,16 +123,16 @@ class Entry {
 
     return Entry(
       date: parsedDate,
-      morning: parsedMorning,
-      noon: parsedNoon,
-      afternoon: parsedAfternoon,
-      night: parsedNight,
-      evening: parsedEvening,
+      morningValue: parsedMorning,
+      noonValue: parsedNoon,
+      afternoonValue: parsedAfternoon,
+      nightValue: parsedNight,
+      eveningValue: parsedEvening,
     );
   }
 
   @override
   String toString() {
-    return "${_dateFormat.format(date)},${morning.value},${noon.value},${afternoon.value},${night.value},${evening.value}";
+    return "${_dateFormat.format(date)},${morningValue.value},${noonValue.value},${afternoonValue.value},${nightValue.value},${eveningValue.value}";
   }
 }
