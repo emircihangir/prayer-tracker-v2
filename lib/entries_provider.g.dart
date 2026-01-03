@@ -41,7 +41,7 @@ final class EntriesProvider
   }
 }
 
-String _$entriesHash() => r'7293f92d8a8d5266df8f665f6aeed63bb2b024c0';
+String _$entriesHash() => r'4b3bb3150735c33783ee1ada4aacd2ec7edcca5f';
 
 abstract class _$Entries extends $Notifier<Map<String, Entry>> {
   Map<String, Entry> build();

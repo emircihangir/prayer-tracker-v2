@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:prayertracker/entries_provider.dart';
-import 'package:prayertracker/entry.dart';
 import 'package:prayertracker/entry_widget.dart';
+import 'package:prayertracker/io.dart';
 
-Map<String, Entry> generateDummyData(int n) {
-  DateTime originDate = DateTime(2025, 11, 16);
-  Map<String, Entry> result = {};
-  for (var i = 0; i < n; i++) {
-    final newDate = originDate.subtract(Duration(days: i));
-    final String newDateString = Entry.dateFormat().format(newDate);
-    result[newDateString] = Entry(date: newDate);
-  }
-  return result;
-}
-
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await IO.initializeDataFiles();
   runApp(ProviderScope(child: const App()));
 }
 
